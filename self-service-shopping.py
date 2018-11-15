@@ -11,7 +11,8 @@ def decode_qr(input_frame):
     Decode QR in frame return a list of detected QR
     """
     detected_list = []
-    for i in range (0,30):
+    for i in range (0, 50):
+        input_frame = FrameThread.frame_qr
         decodedObjects = pyzbar.decode(input_frame)
         for obj in decodedObjects:
             if obj.data.decode('ascii') not in detected_list:
@@ -99,6 +100,21 @@ saldo = [
     30000
 ]
 
+# Create Product List
+product_index = [
+    "A",
+    "B",
+    "C",
+    "D"
+]
+
+product_name = [
+    "Indomie",
+    "Telor",
+    "Olive",
+    "Milo"
+]
+
 # Initialize variable
 face_locations = []
 face_encodings = []
@@ -145,7 +161,7 @@ while True:
         print("-!!- PROMO HARGA FLAT 1000 SADJA -!!-")
         print("Produk Yang Tersedia:")
         for obj in list_produk:
-            print(obj)
+            print(product_name[product_index.index(obj)])
         time.sleep(shopping_time)
         list_produk_akhir = []
         list_produk_akhir = decode_qr(FrameThread.frame_qr)
