@@ -11,12 +11,21 @@ def decode_qr(input_frame):
     Decode QR in frame return a list of detected QR
     """
     detected_list = []
+    input_frame = FrameThread.frame_qr
     for i in range (0, 50):
-        input_frame = FrameThread.frame_qr
         decodedObjects = pyzbar.decode(input_frame)
         for obj in decodedObjects:
             if obj.data.decode('ascii') not in detected_list:
                 detected_list.append(obj.data.decode('ascii'))
+            points = obj.polygon
+            if len(points) > 4 : 
+                hull = cv2.convexHull(np.array([point for point in points], dtype=np.float32))
+                hull = list(map(tuple, np.squeeze(hull)))
+            else : 
+                hull = points
+            n = len(hull)
+            for j in range(0, n):
+                cv2.rectangle(input_frame, hull[j], hull[ (j+1) % n], (0,0,0), 3)
     return detected_list
 
 class FrameCapture:
@@ -105,14 +114,18 @@ product_index = [
     "A",
     "B",
     "C",
-    "D"
+    "D",
+    "E",
+    "F"
 ]
 
 product_name = [
     "Indomie",
-    "Telor",
-    "Olive",
-    "Milo"
+    "Beng-Beng",
+    "Permen",
+    "Choki-Choki",
+    "Aqua",
+    "Teh Gelas"
 ]
 
 # Initialize variable
@@ -166,11 +179,22 @@ while True:
         list_produk_akhir = []
         list_produk_akhir = decode_qr(FrameThread.frame_qr)
         jumlah_terambil = len(list_produk)-len(list_produk_akhir)
-        print("Anda mengambil", jumlah_terambil, "barang")
-        print("Total Belanja", jumlah_terambil*1000)
-        saldo[first_match_index] = saldo[first_match_index] - jumlah_terambil*1000
-        print("Saldo Anda Sekarang", saldo[first_match_index])
-        print("Terima Kasih Sudah Berbelanja", face_names[0], "!")
-        time.sleep(5)
+        if jumlah_terambil == 0:
+            print("Anda tidak berbelanja apapun :(")
+        elif jumlah_terambil > 0:
+            print("Anda mengambil", jumlah_terambil, "barang")
+            print("Total Belanja", jumlah_terambil*1000)
+            saldo[first_match_index] = saldo[first_match_index] - jumlah_terambil*1000
+            print("Saldo Anda Sekarang", saldo[first_match_index])
+            print("Terima Kasih Sudah Berbelanja", face_names[0], "!")
+            time.sleep(5)
+        elif jumlah_terambil < 0:
+            print("Anda mengambil", jumlah_terambil, "barang")
+            print("Hmm... Anda kok malah menjual barang ?")
+            print("Total Belanja", jumlah_terambil*1000)
+            saldo[first_match_index] = saldo[first_match_index] - jumlah_terambil*1000
+            print("Saldo Anda Sekarang", saldo[first_match_index])
+            print("Terima Kasih Sudah Berbelanja (Berjualan)", face_names[0], "!")
+            time.sleep(5)
 
     time.sleep(0.5)
