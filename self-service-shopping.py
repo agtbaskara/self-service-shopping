@@ -97,7 +97,7 @@ known_face_encodings = [
 
 # Create List Names
 known_face_names = [
-    "Alpha",
+    "Lantang",
     "Baskara",
     "Charlie"
 ]
@@ -123,7 +123,7 @@ product_name = [
     "Indomie",
     "Beng-Beng",
     "Permen",
-    "Choki-Choki",
+    "Oreo",
     "Aqua",
     "Teh Gelas"
 ]
